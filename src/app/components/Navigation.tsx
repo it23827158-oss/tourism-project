@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router';
-import { Menu, X, User, ShoppingCart, LogOut, Palmtree, Globe } from 'lucide-react';
+import { Menu, X, User, ShoppingCart, LogOut, Globe } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -63,6 +63,11 @@ export default function Navigation() {
     };
   }, [showLangMenu]);
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setShowLangMenu(false);
+  }, [location.pathname]);
+
   const handleLanguageChange = (code: string) => {
     setLanguage(code as any);
     setShowLangMenu(false);
@@ -71,24 +76,30 @@ export default function Navigation() {
   const currentLanguage = languages.find(lang => lang.code === language);
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border shadow-lg shadow-black/5">
+    <nav className="sticky top-0 z-50 border-b border-border/60 bg-card/75 backdrop-blur-2xl shadow-lg shadow-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="SL Traveler" className="h-16 w-auto" />
+          <Link to="/" className="flex items-center gap-3">
+            <div className="relative">
+              <img src="/logo.png" alt="SL Traveler" className="h-14 w-auto drop-shadow-sm" />
+            </div>
+            <div className="hidden lg:block leading-tight">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Sri Lanka</p>
+              <p className="text-sm font-semibold text-foreground">Traveler Collective</p>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center gap-2 rounded-full border border-border/60 bg-muted/30 p-1.5">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`transition-colors ${
+                className={`rounded-full px-4 py-2 text-sm transition-all duration-200 ${
                   isActive(link.path)
-                    ? 'text-primary font-semibold'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
                 {link.label}
@@ -97,10 +108,10 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center gap-2 rounded-full border border-border/60 bg-card/80 px-2 py-1.5">
             {/* Cart Icon */}
             <Link to="/bookings">
-              <Button variant="ghost" size="sm" className="relative gap-2">
+              <Button variant="ghost" size="sm" className="relative gap-2 rounded-full hover:bg-muted">
                 <ShoppingCart className="w-4 h-4" />
                 {cartItems.length > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
@@ -115,22 +126,22 @@ export default function Navigation() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="gap-2"
+                className="gap-2 rounded-full hover:bg-muted"
                 onClick={() => setShowLangMenu(!showLangMenu)}
               >
                 <Globe className="w-4 h-4" />
-                <span>{currentLanguage.flag}</span>
+                <span>{currentLanguage?.flag ?? '🌐'}</span>
               </Button>
               
               {showLangMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-border bg-card/95 shadow-xl backdrop-blur z-50">
                   <div className="py-1">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
                         onClick={() => handleLanguageChange(lang.code)}
-                        className={`w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 ${
-                          language === lang.code ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                        className={`w-full text-left px-4 py-2.5 hover:bg-muted/70 flex items-center gap-2 transition-colors ${
+                          language === lang.code ? 'bg-primary/10 text-primary' : 'text-foreground'
                         }`}
                       >
                         <span>{lang.flag}</span>
@@ -145,12 +156,12 @@ export default function Navigation() {
             {isAuthenticated && user ? (
               <>
                 <Link to="/dashboard">
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2 rounded-full hover:bg-muted">
                     <User className="w-4 h-4" />
                     User
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
+                <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2 rounded-full border-border/70">
                   <LogOut className="w-4 h-4" />
                   {t.nav.logout}
                 </Button>
@@ -158,12 +169,12 @@ export default function Navigation() {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="rounded-full border-border/70">
                     {t.nav.login}
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm">
+                  <Button size="sm" className="rounded-full">
                     {t.nav.signup}
                   </Button>
                 </Link>
@@ -173,29 +184,54 @@ export default function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden rounded-xl border border-border/70 p-2.5 bg-card/80"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6 text-gray-600" />
+              <X className="w-5 h-5 text-foreground" />
             ) : (
-              <Menu className="w-6 h-6 text-gray-600" />
+              <Menu className="w-5 h-5 text-foreground" />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-3">
+          <div className="md:hidden py-4 border-t border-border/70">
+            <div className="rounded-2xl border border-border/70 bg-card/90 p-3 shadow-lg backdrop-blur">
+              <div className="mb-3 grid grid-cols-2 gap-2">
+                <Link to="/bookings" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" className="w-full gap-2 rounded-xl">
+                    <ShoppingCart className="w-4 h-4" />
+                    {cartItems.length > 0 ? `${t.nav.bookings} (${cartItems.length})` : t.nav.bookings}
+                  </Button>
+                </Link>
+                {isAuthenticated && user ? (
+                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full gap-2 rounded-xl">
+                      <User className="w-4 h-4" />
+                      User
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full rounded-xl">
+                      {t.nav.login}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <div className="flex flex-col space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl transition-colors ${
                     isActive(link.path)
-                      ? 'text-primary bg-primary/5 font-semibold'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'text-primary bg-primary/10 font-semibold'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -203,19 +239,19 @@ export default function Navigation() {
                 </Link>
               ))}
 
-              <div className="pt-3 border-t border-gray-200 space-y-2">
+              <div className="pt-3 border-t border-border/70 space-y-3">
                 {/* Mobile Language Selector */}
-                <div className="px-4 pb-2">
-                  <p className="text-xs text-gray-500 mb-2">Language</p>
+                <div className="px-1">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">Language</p>
                   <div className="grid grid-cols-2 gap-2">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
                         onClick={() => handleLanguageChange(lang.code)}
-                        className={`px-3 py-2 rounded-lg border text-sm flex items-center gap-2 ${
+                        className={`px-3 py-2.5 rounded-xl border text-sm flex items-center gap-2 transition-colors ${
                           language === lang.code 
                             ? 'bg-primary text-white border-primary' 
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-primary'
+                            : 'bg-card text-foreground border-border hover:border-primary/60'
                         }`}
                       >
                         <span>{lang.flag}</span>
@@ -226,32 +262,27 @@ export default function Navigation() {
                 </div>
 
                 {isAuthenticated && user ? (
-                  <>
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" className="w-full gap-2">
-                        <User className="w-4 h-4" />
-                        User
-                      </Button>
-                    </Link>
-                    <Button variant="outline" className="w-full gap-2" onClick={handleLogout}>
+                  <div className="px-1">
+                    <Button variant="outline" className="w-full gap-2 rounded-xl" onClick={handleLogout}>
                       <LogOut className="w-4 h-4" />
                       {t.nav.logout}
                     </Button>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        {t.nav.login}
-                      </Button>
-                    </Link>
+                  <div className="grid grid-cols-2 gap-2 px-1">
                     <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="w-full">
+                      <Button className="w-full rounded-xl">
                         {t.nav.signup}
                       </Button>
                     </Link>
-                  </>
+                    <Link to="/bookings" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" className="w-full rounded-xl">
+                        {t.nav.bookings}
+                      </Button>
+                    </Link>
+                  </div>
                 )}
+              </div>
               </div>
             </div>
           </div>
