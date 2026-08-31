@@ -1,10 +1,17 @@
 import { Link } from 'react-router';
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Palmtree } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
+
+const socialLinks = [
+  { href: 'https://facebook.com/your-page', label: 'Facebook', Icon: Facebook },
+  { href: 'https://instagram.com/your-page', label: 'Instagram', Icon: Instagram },
+  { href: 'https://x.com/your-page', label: 'X / Twitter', Icon: Twitter },
+  { href: 'https://youtube.com/@your-channel', label: 'YouTube', Icon: Youtube },
+];
 
 export default function Footer() {
   const { t } = useTranslation();
-  
+
   return (
     <footer className="bg-card border-t border-border text-muted-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -16,18 +23,18 @@ export default function Footer() {
               {t.footer.description}
             </p>
             <div className="flex space-x-4 mt-6">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Youtube className="w-5 h-5" />
-              </a>
+              {socialLinks.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
 
