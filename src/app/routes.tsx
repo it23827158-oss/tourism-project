@@ -7,6 +7,7 @@ import TripPlanner from "./pages/TripPlanner";
 import Bookings from "./pages/Bookings";
 import TravelGuides from "./pages/TravelGuides";
 import MapServices from "./pages/MapServices";
+import Faq from "./pages/Faq";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
       { path: "bookings", Component: Bookings },
       { path: "guides", Component: TravelGuides },
       { path: "map", Component: MapServices },
+      { path: "faq", Component: Faq },
       { path: "dashboard", Component: Dashboard },
       { path: "login", Component: Login },
       { path: "register", Component: Register },

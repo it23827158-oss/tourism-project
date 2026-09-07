@@ -55,7 +55,7 @@ export default function Footer() {
             <h3 className="text-foreground font-semibold mb-4">{t.footer.support}</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-sm hover:text-primary transition-colors">{t.footer.support}</a></li>
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">{t.footer.faq}</a></li>
+              <li><Link to="/faq" className="text-sm hover:text-primary transition-colors">{t.footer.faq}</Link></li>
               <li><a href="#" className="text-sm hover:text-primary transition-colors">{t.footer.privacy}</a></li>
               <li><a href="#" className="text-sm hover:text-primary transition-colors">{t.footer.terms}</a></li>
               <li><a href="#" className="text-sm hover:text-primary transition-colors">Contact Us</a></li>
