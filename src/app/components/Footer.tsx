@@ -1,16 +1,31 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
-
-const socialLinks = [
-  { href: 'https://facebook.com/your-page', label: 'Facebook', Icon: Facebook },
-  { href: 'https://instagram.com/your-page', label: 'Instagram', Icon: Instagram },
-  { href: 'https://x.com/your-page', label: 'X / Twitter', Icon: Twitter },
-  { href: 'https://youtube.com/@your-channel', label: 'YouTube', Icon: Youtube },
-];
+import { siteSettingsService, type SiteSettings } from '../services/siteSettingsService';
 
 export default function Footer() {
   const { t } = useTranslation();
+  const [settings, setSettings] = useState<SiteSettings>(siteSettingsService.getSettings());
+
+  useEffect(() => {
+    const updateSettings = () => setSettings(siteSettingsService.getSettings());
+
+    window.addEventListener('sltraveler-settings-updated', updateSettings);
+    window.addEventListener('storage', updateSettings);
+
+    return () => {
+      window.removeEventListener('sltraveler-settings-updated', updateSettings);
+      window.removeEventListener('storage', updateSettings);
+    };
+  }, []);
+
+  const socialLinks = [
+    { href: settings.facebookUrl, label: 'Facebook', Icon: Facebook },
+    { href: settings.instagramUrl, label: 'Instagram', Icon: Instagram },
+    { href: settings.twitterUrl, label: 'X / Twitter', Icon: Twitter },
+    { href: settings.youtubeUrl, label: 'YouTube', Icon: Youtube },
+  ];
 
   return (
     <footer className="bg-card border-t border-border text-muted-foreground">
@@ -18,7 +33,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <img src="/logo.png" alt="SL Traveler" className="h-16 w-auto mb-4" />
+            <img src="/logo.png" alt={settings.companyName} className="h-16 w-auto mb-4" />
             <p className="text-sm text-gray-400">
               {t.footer.description}
             </p>
@@ -68,15 +83,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>123 Beach Road, Colombo 03, Sri Lanka</span>
+                <span>{settings.address}</span>
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <span>+94 11 234 5678</span>
+                <span>{settings.phone}</span>
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <span>hello@sltraveler.lk</span>
+                <span>{settings.email}</span>
               </li>
             </ul>
           </div>
@@ -84,7 +99,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © 2026 SL Traveler. {t.footer.allRightsReserved}
+            © 2026 {settings.companyName}. {t.footer.allRightsReserved}
           </p>
         </div>
       </div>

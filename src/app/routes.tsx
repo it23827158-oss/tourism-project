@@ -12,7 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AdminLogin from "./pages/AdminLogin";
-import AdminPanel from "./pages/AdminPanel";
+import AdminDashboard from "./pages/AdminDashboard";
 import AdminHeroSettings from "./pages/AdminHeroSettings";
 import NotFound from "./pages/NotFound";
 
@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    Component: AdminPanel,
+    Component: AdminDashboard,
   },
   {
     path: "/admin/hero-settings",
